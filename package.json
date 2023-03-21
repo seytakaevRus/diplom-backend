@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "ts-node ./src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "start:prod": "npm run build && node ./dist/src/server.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +22,13 @@
     "mysql2": "^3.2.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.21"
+    "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/node": "^18.15.5",
+    "nodemon": "^2.0.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
   }
 }
