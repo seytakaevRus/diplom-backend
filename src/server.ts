@@ -1,4 +1,3 @@
-
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -14,7 +13,7 @@ app.use(
   cors({
     credentials: true,
     origin: process.env.CLIENT_ORIGIN_URL,
-  }),
+  })
 );
 
 app.use(express.json());

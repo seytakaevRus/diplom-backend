@@ -12,7 +12,7 @@ import {
   WRONG_CREDENTIALS,
 } from '../constants/index';
 
-import pull from '../db/db.config';
+import pull from '../configs/connection';
 
 const verifyAsync = promisify(verify) as (
   token: string,
