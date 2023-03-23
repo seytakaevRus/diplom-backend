@@ -1,6 +1,5 @@
-import { verify, sign, Secret, SigningKeyCallback } from 'jsonwebtoken';
-import { promisify } from 'util';
 import bcrypt from 'bcrypt';
+import { verify, sign } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 
 import {
@@ -11,13 +10,7 @@ import {
   SERVER_ERROR,
   WRONG_CREDENTIALS,
 } from '../constants/index';
-
-import pull from '../configs/connection';
-
-const verifyAsync = promisify(verify) as (
-  token: string,
-  secretOrPublicKey: Secret,
-) => Promise<SigningKeyCallback>;
+import User from '../models/user';
 
 const authController = {
   async signIn(req: Request, res: Response) {
@@ -28,24 +21,22 @@ const authController = {
         throw new Error(NEED_DATA);
       }
 
-      const [userData] = await pull.query(
-        'SELECT id, email, firstname, lastname, password FROM diplom.users WHERE email = ?',
-        [email],
-      );
+      const user = await User.findOne({
+        where: {
+          email,
+        },
+      });
 
-      // @ts-ignore
-      if (userData.length === 0) {
+      if (!user) {
         throw new Error(WRONG_CREDENTIALS);
       }
 
       const {
         password: passwordHash,
         id,
-        firstname: firstName,
-        lastname: lastName,
-        // @ts-ignore
-      } = userData[0];
-      const fullName = `${firstName} ${lastName}`;
+        firstName,
+        lastName,
+      } = user.dataValues;
 
       if (!process.env.ACCESS_SECRET_KEY) {
         console.error('ACCESS_SECRET_KEY должен быть определен');
@@ -55,20 +46,20 @@ const authController = {
       if (await bcrypt.compare(password, passwordHash)) {
         const token = sign(
           {
-            email,
             id,
-            fullName,
           },
           process.env.ACCESS_SECRET_KEY,
         );
 
         res.cookie('token', token, { httpOnly: true });
 
-        res.status(200).send({
+        const responseData = {
           id,
-          fullName,
+          fullName: `${firstName} ${lastName}`,
           email,
-        });
+        };
+
+        res.status(200).send(responseData);
       } else {
         throw new Error(WRONG_CREDENTIALS);
       }
@@ -90,27 +81,29 @@ const authController = {
         throw new Error(NEED_DATA);
       }
 
-      const [emails] = await pull.query(
-        'SELECT email FROM users WHERE email = ?',
-        [email],
-      );
+      const user = await User.findOne({
+        where: {
+          email,
+        },
+      });
 
-      // @ts-ignore
-      if (emails.length > 0) {
+      if (user) {
         throw new Error(EMAIL_ALREADY_EXIST);
       } else if (password !== passwordConfirm) {
         throw new Error(PASSWORDS_NOT_EQUAL);
       }
+
       const saltRounds = 10;
       const salt = await bcrypt.genSalt(saltRounds);
       const passwordHash = await bcrypt.hash(password, salt);
 
-      const [rows] = await pull.query('INSERT INTO users SET ?', {
+      const { dataValues } = await User.create({
         firstName,
         lastName,
         email,
         password: passwordHash,
       });
+
       const fullName = `${firstName} ${lastName}`;
 
       if (!process.env.ACCESS_SECRET_KEY) {
@@ -120,22 +113,20 @@ const authController = {
 
       const token = sign(
         {
-          email,
-          // @ts-ignore
-          id: rows.insertId,
-          fullName,
+          id: dataValues.id,
         },
         process.env.ACCESS_SECRET_KEY,
       );
 
       res.cookie('token', token, { httpOnly: true });
 
-      res.status(201).send({
-        // @ts-ignore
-        id: rows.insertId,
+      const responseData = {
+        id: dataValues.id,
         fullName,
         email,
-      });
+      };
+
+      res.status(201).send(responseData);
     } catch (error: any) {
       if ('message' in error) {
         if (error.message === SERVER_ERROR) {
@@ -159,9 +150,38 @@ const authController = {
         throw new Error(SERVER_ERROR);
       }
 
-      // TODO: Получать из токена ID пользователя и по нему из базы доставать пользователя.
-      const userData = await verifyAsync(token, process.env.ACCESS_SECRET_KEY);
-      res.status(200).send(userData);
+      verify(
+        token,
+        process.env.ACCESS_SECRET_KEY,
+        async (err: any, result: any) => {
+          if (err) throw err;
+
+          if (!result.id) {
+            console.error('В токене должно быть поле id');
+            throw new Error(SERVER_ERROR);
+          }
+
+          const user = await User.findOne({
+            where: {
+              id: result.id,
+            },
+          });
+
+          if (!user) {
+            throw new Error(NEED_AUTH);
+          }
+
+          const { id, email, firstName, lastName } = user.dataValues;
+
+          const responseData = {
+            id,
+            fullName: `${firstName} ${lastName}`,
+            email,
+          };
+
+          res.status(200).send(responseData);
+        },
+      );
     } catch (error: any) {
       if ('message' in error) {
         if (error.message === SERVER_ERROR) {
