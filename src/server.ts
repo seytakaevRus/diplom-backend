@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 import authRouter from './routes/auth';
-import sequelize from './configs/connection';
+import coursesRouter from './routes/courses';
 
 const app = express();
 
@@ -22,16 +22,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/auth', authRouter);
+app.use('/courses', coursesRouter);
 
-(async () => {
-  try {
-    await sequelize.sync();
-    console.log('Successful synchronization with sequelize models.');
-
-    app.listen(process.env.PORT, () => {
-      console.log(`Server started on Port ${process.env.PORT}`);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-})();
+app.listen(process.env.PORT, () => {
+  console.log(`Server started on Port ${process.env.PORT}`);
+});

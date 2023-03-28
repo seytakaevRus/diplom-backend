@@ -10,7 +10,9 @@ import {
   SERVER_ERROR,
   WRONG_CREDENTIALS,
 } from '../constants/index';
-import User from '../models/user';
+import sequelize from '../models/index';
+
+const User = sequelize.models.User;
 
 const authController = {
   async signIn(req: Request, res: Response) {
