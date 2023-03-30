@@ -4,6 +4,7 @@ interface LessonAttributes {
   id: number;
   title: string;
   content: string;
+  position: number;
 }
 
 type LessonCreationAttributes = Optional<LessonAttributes, 'id'>;
@@ -22,6 +23,10 @@ const initLessonModel = (sequelize: Sequelize) => {
 
         title: {
           type: DataTypes.STRING,
+          allowNull: false,
+        },
+        position: {
+          type: DataTypes.INTEGER,
           allowNull: false,
         },
         content: {

@@ -12,7 +12,7 @@ import {
 } from '../constants/index';
 import sequelize from '../models/index';
 
-const User = sequelize.models.User;
+const { User } = sequelize.models;
 
 const authController = {
   async signIn(req: Request, res: Response) {
