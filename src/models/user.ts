@@ -1,5 +1,4 @@
-import { DataTypes, ModelDefined, Optional } from 'sequelize';
-import sequelize from '../configs/connection';
+import { DataTypes, ModelDefined, Optional, Sequelize } from 'sequelize';
 
 interface UserAttributes {
   id: number;
@@ -11,37 +10,41 @@ interface UserAttributes {
 
 type UserCreationAttributes = Optional<UserAttributes, 'id'>;
 
-const User: ModelDefined<UserAttributes, UserCreationAttributes> =
-  sequelize.define(
-    'User',
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        unique: true,
-        primaryKey: true,
+const initUserModel = (sequelize: Sequelize) => {
+  const User: ModelDefined<UserAttributes, UserCreationAttributes> =
+    sequelize.define(
+      'User',
+      {
+        id: {
+          type: DataTypes.INTEGER,
+          autoIncrement: true,
+          unique: true,
+          primaryKey: true,
+        },
+        firstName: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        lastName: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        email: {
+          type: DataTypes.STRING,
+          unique: true,
+          allowNull: false,
+        },
+        password: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
       },
-      firstName: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      {
+        timestamps: false,
       },
-      lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-    },
-    {
-      timestamps: false,
-    },
-  );
+    );
 
-export default User;
+  return User;
+};
+
+export default initUserModel;
