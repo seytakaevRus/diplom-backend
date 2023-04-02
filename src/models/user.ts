@@ -41,6 +41,7 @@ const initUserModel = (sequelize: Sequelize) => {
       },
       {
         timestamps: false,
+        tableName: 'users',
       },
     );
 

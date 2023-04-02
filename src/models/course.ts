@@ -32,6 +32,7 @@ const initCourseModel = (sequelize: Sequelize) => {
       },
       {
         timestamps: false,
+        tableName: 'courses',
       },
     );
 

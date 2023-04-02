@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 
 import authRouter from './routes/auth';
 import coursesRouter from './routes/courses';
+import lessonsRouter from './routes/lessons';
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(cookieParser());
 
 app.use('/auth', authRouter);
 app.use('/courses', coursesRouter);
+app.use('/lessons', lessonsRouter);
+
 
 app.listen(process.env.PORT, () => {
   console.log(`Server started on Port ${process.env.PORT}`);

@@ -31,6 +31,7 @@ const initChapterModel = (sequelize: Sequelize) => {
       },
       {
         timestamps: false,
+        tableName: 'chapters',
       },
     );
 

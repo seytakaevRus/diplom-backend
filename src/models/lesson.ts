@@ -25,17 +25,18 @@ const initLessonModel = (sequelize: Sequelize) => {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        position: {
-          type: DataTypes.INTEGER,
+        content: {
+          type: DataTypes.TEXT,
           allowNull: false,
         },
-        content: {
-          type: DataTypes.STRING,
+        position: {
+          type: DataTypes.INTEGER,
           allowNull: false,
         },
       },
       {
         timestamps: false,
+        tableName: 'lessons',
       },
     );
 

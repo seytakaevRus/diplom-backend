@@ -140,50 +140,28 @@ const authController = {
     }
   },
   async whoAmI(req: Request, res: Response) {
-    const { token } = req.cookies;
-
     try {
-      if (!token) {
-        throw new Error(NEED_AUTH);
+      if ('userId' in req) {
+        const user = await User.findOne({
+          where: {
+            id: req.userId,
+          },
+        });
+
+        if (!user) {
+          throw new Error(NEED_AUTH);
+        }
+  
+        const { id, email, firstName, lastName } = user.dataValues;
+  
+        const responseData = {
+          id,
+          fullName: `${firstName} ${lastName}`,
+          email,
+        };
+  
+        res.status(200).send(responseData);
       }
-
-      if (!process.env.ACCESS_SECRET_KEY) {
-        console.error('ACCESS_SECRET_KEY должен быть определен');
-        throw new Error(SERVER_ERROR);
-      }
-
-      verify(
-        token,
-        process.env.ACCESS_SECRET_KEY,
-        async (err: any, result: any) => {
-          if (err) throw err;
-
-          if (!result.id) {
-            console.error('В токене должно быть поле id');
-            throw new Error(SERVER_ERROR);
-          }
-
-          const user = await User.findOne({
-            where: {
-              id: result.id,
-            },
-          });
-
-          if (!user) {
-            throw new Error(NEED_AUTH);
-          }
-
-          const { id, email, firstName, lastName } = user.dataValues;
-
-          const responseData = {
-            id,
-            fullName: `${firstName} ${lastName}`,
-            email,
-          };
-
-          res.status(200).send(responseData);
-        },
-      );
     } catch (error: any) {
       if ('message' in error) {
         if (error.message === SERVER_ERROR) {
