@@ -28,6 +28,9 @@ const coursesController = {
       where: {
         courseId: id,
       },
+      order: [
+        ['id', 'ASC'],
+      ]
     });
 
     const lessonIds: number[] = [];
@@ -45,6 +48,9 @@ const coursesController = {
         where: {
           chapterId: chapterData.id,
         },
+        order: [
+          ['id', 'ASC'],
+      ],
       });
 
       for (const { dataValues: lessonData } of chapterLessons) {
