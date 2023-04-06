@@ -29,6 +29,10 @@ const initCourseModel = (sequelize: Sequelize) => {
           type: DataTypes.ENUM(audienceType.child, audienceType.teenager),
           allowNull: false,
         },
+        slug: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        }
       },
       {
         timestamps: false,
