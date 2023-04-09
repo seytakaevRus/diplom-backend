@@ -32,6 +32,10 @@ const initCourseModel = (sequelize: Sequelize) => {
         slug: {
           type: DataTypes.STRING,
           allowNull: false,
+        },
+        cover: {
+          type: DataTypes.STRING,
+          allowNull: false,
         }
       },
       {
