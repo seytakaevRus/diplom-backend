@@ -5,6 +5,7 @@ import initCourseModel from './course';
 import initChapterModel from './chapter';
 import initUserModel from './user';
 import initLessonModel from './lesson';
+import initReviewModel from './review';
 
 dotenv.config();
 
@@ -39,7 +40,8 @@ const sequelize = new Sequelize(
 const Course = initCourseModel(sequelize);
 const Chapter = initChapterModel(sequelize);
 const Lesson = initLessonModel(sequelize);
-initUserModel(sequelize);
+const User = initUserModel(sequelize);
+const Review = initReviewModel(sequelize);
 
 Course.hasMany(Chapter, {
   foreignKey: 'courseId',
@@ -54,5 +56,19 @@ Chapter.hasMany(Lesson, {
 Lesson.belongsTo(Chapter, {
   foreignKey: 'chapterId',
 });
+
+User.hasMany(Review, {
+  foreignKey: 'userId'
+});
+Review.belongsTo(User, {
+  foreignKey: 'userId'
+})
+
+Course.hasMany(Review, {
+  foreignKey: 'courseId'
+});
+Review.belongsTo(Course, {
+  foreignKey: 'courseId'
+})
 
 export default sequelize;
