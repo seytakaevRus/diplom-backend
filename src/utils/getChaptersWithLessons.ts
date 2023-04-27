@@ -5,10 +5,8 @@ const { Chapter, Lesson } = sequelize.models;
 interface ChapterWithLessons {
   id: number;
   title: string;
-  position: string;
   lessons: {
     id: number;
-    position: string;
     title: string;
   }[];
 }
@@ -28,7 +26,6 @@ export const getChaptersWithLessons = async (courseId: string) => {
     const chapterWithLessons: ChapterWithLessons = {
       id: chapterData.id,
       title: chapterData.title,
-      position: String(chapterData.position),
       lessons: [],
     };
 
@@ -42,7 +39,6 @@ export const getChaptersWithLessons = async (courseId: string) => {
     for (const { dataValues: lessonData } of chapterLessons) {
       chapterWithLessons.lessons.push({
         id: lessonData.id,
-        position: `${chapterData.position}.${lessonData.position}`,
         title: lessonData.title,
       });
 

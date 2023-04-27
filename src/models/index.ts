@@ -6,6 +6,7 @@ import initChapterModel from './chapter';
 import initUserModel from './user';
 import initLessonModel from './lesson';
 import initReviewModel from './review';
+import initTestQuestion from './testQuestion';
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ const Chapter = initChapterModel(sequelize);
 const Lesson = initLessonModel(sequelize);
 const User = initUserModel(sequelize);
 const Review = initReviewModel(sequelize);
+const TestQuestions = initTestQuestion(sequelize)
 
 Course.hasMany(Chapter, {
   foreignKey: 'courseId',
@@ -69,6 +71,13 @@ Course.hasMany(Review, {
 });
 Review.belongsTo(Course, {
   foreignKey: 'courseId'
-})
+});
+
+Course.hasMany(TestQuestions, {
+  foreignKey: 'courseId'
+});
+TestQuestions.belongsTo(Course, {
+  foreignKey: 'courseId'
+});
 
 export default sequelize;
