@@ -11,12 +11,12 @@ import initTestQuestion from './testQuestion';
 dotenv.config();
 
 const sequelize = new Sequelize(
-  process.env.DATABASE_NAME as string,
-  process.env.DATABASE_USER_NAME as string,
-  process.env.DATABASE_USER_PASSWORD,
+  process.env.DB_NAME as string,
+  process.env.DB_USERNAME as string,
+  process.env.DB_PASSWORD,
   {
-    host: process.env.DATABASE_HOST,
-    dialect: process.env.DATABASE_DIALECT as Dialect,
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT as Dialect,
   },
 );
 
@@ -26,15 +26,6 @@ const sequelize = new Sequelize(
     console.log('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database: ', error);
-  }
-})();
-
-(async () => {
-  try {
-    await sequelize.sync();
-    console.log('Successful synchronization with sequelize models.');
-  } catch (error) {
-    console.log(error);
   }
 })();
 

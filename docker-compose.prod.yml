@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  courses_main:
+    container_name: courses_main
+    image: ${TAG}
+    ports:
+      - ${PORT}:${PORT}
+    command: ${RUN_COMMAND}
+    env_file:
+      - .env
+    networks:
+      - webnet
+    depends_on:
+      - courses_postgres
+  courses_postgres:
+    container_name: courses_postgres
+    image: postgres:15.0
+    networks:
+      - webnet
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_NAME}
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - ${DB_OUTER_PORT}:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+networks:
+  webnet:
+volumes:
+  pgdata:
